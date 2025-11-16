@@ -3,11 +3,11 @@ import { getShortUrl } from "../dao/shortUrl.js";
 
 export const createShortUrl = async (req, res) => {
   const Originalurl = req.body.url;
-  //console.log(Originalurl)
+  console.log(Originalurl)
 
-  const shortUrl = ShortUrlServiceWithoutUser(Originalurl);
+  const shortUrl = await ShortUrlServiceWithoutUser(Originalurl);
   console.log(shortUrl);
-  res.send(shortUrl);
+  res.send(process.env.SHORT_URL+shortUrl);
 };
 
 export const redirectShortUrlController = async (req, res) => {
