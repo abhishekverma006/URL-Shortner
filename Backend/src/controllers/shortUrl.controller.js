@@ -7,7 +7,7 @@ export const createShortUrl = async (req, res) => {
 
   const shortUrl = await ShortUrlServiceWithoutUser(Originalurl);
   console.log(shortUrl);
-  res.send(process.env.SHORT_URL+shortUrl);
+  res.status(200).json({shortUrl: process.env.SHORT_URL+shortUrl});
 };
 
 export const redirectShortUrlController = async (req, res) => {
