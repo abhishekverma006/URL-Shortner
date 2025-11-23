@@ -1,12 +1,12 @@
-import axiosInstance from "../utils/axiosInstance"
+import axiosInstance from "./axiosInstance.api.js";
 
-export const loginUser = async (password,email) =>{
-    const {data} = await axiosInstance.post("/api/auth/login",{email,password})
+export const loginUser = async (password, email,username) =>{
+    const {data} = await axiosInstance.post("/api/auth/login",{email,password,username})
     return data
 }
 
-export const registerUser = async (name,password,email) =>{
-    const {data} = await axiosInstance.post("/api/auth/register",{name,email,password})
+export const registerUser = async (name,username,password,email) =>{
+    const {data} = await axiosInstance.post("/api/auth/register",{name,username,email,password})
     return data
 }
 

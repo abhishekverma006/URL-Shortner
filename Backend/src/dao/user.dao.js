@@ -1,4 +1,5 @@
 
+import UrlSchema from "../models/urlSchema.model.js";
 import User from "../models/user.model.js";
 
 export const findUserByEmailUsername = async (email, username) => {
@@ -10,7 +11,7 @@ export const findUserbyId = async (id) => {
   return await User.findById(id);
 };
 
-export const createUser = async (name, username, email, hashedPassword, gender) => {
+export const createUser = async (name, username, email, hashedPassword) => {
   const maleProfilePhoto = `https://avatar.iran.liara.run/public/boy?username=${username}`;
   const femaleProfilePhoto = `https://avatar.iran.liara.run/public/girl?username=${username}`;
 
@@ -19,11 +20,15 @@ export const createUser = async (name, username, email, hashedPassword, gender) 
     username,
     email,
     password: hashedPassword,
-    gender,
-    avatar: gender === "male" ? maleProfilePhoto : femaleProfilePhoto,
+    // gender,
+    // avatar: gender === "male" ? maleProfilePhoto : femaleProfilePhoto,
   });
 
   return user;
 
   //console.log(user)
 };
+
+export const getAllUserUrlsDao = async (id) => {
+    return await UrlSchema.find({user:id})
+}

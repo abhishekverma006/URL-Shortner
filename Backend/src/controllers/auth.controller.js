@@ -21,9 +21,9 @@ export const generateTokens = async (userId) => {
 
 // register User
 export const getRegister = async (req, res) => {
-  const { username, email, name, password, gender } = req.body;
+  const { username, email, name, password } = req.body;
 
-  if (!name || !email || !password || !gender || !username) {
+  if (!name || !email || !password || !username) {
     return res.status(400).json({
       message: "All fields are required",
       success: false,
@@ -40,7 +40,7 @@ export const getRegister = async (req, res) => {
     });
   }
 
-  const user = await registerUser(name, username, email, password, gender);
+  const user = await registerUser(name, username, email, password);
 
   const createdUser = await User.findById(user._id).select(
     "-password -refreshToken"
@@ -69,6 +69,7 @@ export const getLogin = async (req, res) => {
   }
 
   let user = await User.findOne({ $or: [{ email }, { username }] });
+ 
 
   if (!user) {
     return res.status(404).json({
@@ -101,13 +102,42 @@ export const getLogin = async (req, res) => {
     .status(200)
     .cookie("accessToken", accessToken, options)
     .cookie("refreshToken", refreshToken, options)
-    .json(
-      {
-        message:"Login successful",
-        success: true,
-        user: loggedInUser,
-        accessToken,
-        refreshToken,
-      }
-    );
+    .json({
+      message: "Login successful",
+      success: true,
+      user: loggedInUser,
+      accessToken,
+      refreshToken,
+    });
 };
+
+//logout user
+export const logout_user = async (req, res) => {
+  await User.findByIdAndUpdate(
+    req.user._id,
+    {
+      $unset: {
+        refreshToken: 1, // this removes the field from document
+      },
+    },
+    {
+      new: true,
+    }
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiError(200, {}, "User logged Out"));
+};
+
+// get_curret_user
+export const get_current_user = async (req, res) => {
+  res.status(200).json({ user: req.user });
+}

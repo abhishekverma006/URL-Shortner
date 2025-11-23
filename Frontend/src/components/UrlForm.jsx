@@ -1,17 +1,26 @@
 import React, { useState } from "react";
-import axios from "axios";
-import {createShortUrl} from '../api/shortUrl.api.js';
+import { createShortUrl } from "../api/shortUrl.api";
+import { useSelector } from "react-redux";
+import { QueryClient } from "@tanstack/react-query";
+import { queryClient } from "../main";
 
 const UrlForm = () => {
   const [url, setUrl] = useState("https://www.google.com");
   const [shortUrl, setShortUrl] = useState();
   const [copied, setCopied] = useState(false);
+  const [error, setError] = useState(null);
+  const [customSlug, setCustomSlug] = useState("");
+  const { verifyJWT } = useSelector((state) => state.auth);
 
   const handleSubmit = async () => {
-    
-    const data = await createShortUrl(url);
-
-    setShortUrl(data);
+    try {
+      const shortUrl = await createShortUrl(url, customSlug);
+      setShortUrl(shortUrl);
+      queryClient.invalidateQueries({ queryKey: ["userUrls"] });
+      setError(null);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleCopy = () => {
@@ -50,6 +59,29 @@ const UrlForm = () => {
       >
         Shorten URL
       </button>
+      {error && (
+        <div className="mt-4 p-3 bg-red-100 text-red-700 rounded-md">
+          {error}
+        </div>
+      )}
+      {verifyJWT && (
+        <div className="mt-4">
+          <label
+            htmlFor="customSlug"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Custom URL (optional)
+          </label>
+          <input
+            type="text"
+            id="customSlug"
+            value={customSlug}
+            onChange={(event) => setCustomSlug(event.target.value)}
+            placeholder="Enter custom slug"
+            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+      )}
       {shortUrl && (
         <div className="mt-6">
           <h2 className="text-lg font-semibold mb-2">Your shortened URL:</h2>
