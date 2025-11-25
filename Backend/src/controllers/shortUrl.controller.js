@@ -40,7 +40,7 @@ export const redirectShortUrlController = async (req, res) => {
   const id = req.params.id;
   console.log(id);
   const url = await getShortUrl(id);
-  console.log(url);
+  // console.log(url);
   if (url) {
     res.redirect(url.full_url);
   } else {

@@ -1,13 +1,18 @@
+import dotenv from "dotenv"
+dotenv.config(
+    {
+        path: './.env'
+    }
+)
 import express from 'express'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
-import { verifyJWT } from './middlewares/auth.middleware.js';
 
 
 const app = express();
 
 app.use(cors({
-    origin: `${process.env.CORS_ORIGIN || 'http://localhost:5173'}`,
+    origin: process.env.CORS_ORIGIN,
     credentials: true,
      allowedHeaders: ["Content-Type", "Authorization"]
 }))
@@ -32,7 +37,7 @@ import user_routes from "./routes/user.route.js"
 app.use("/api/auth",auth_route)
 app.use("/api/user",user_routes)
 app.use("/", redirectShortUrl_route)
-app.use('/api/create',verifyJWT, short_url_route)
+app.use('/api/create', short_url_route)
 
 
 // error Handler
